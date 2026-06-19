@@ -13,6 +13,7 @@ import {
   sendMessage,
   uploadConversationAvatar,
   uploadMyAvatar,
+  changePassword,
 } from "./api";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
@@ -270,6 +271,7 @@ export default function App() {
   const [activeModal, setActiveModal] = useState<ModalView>(null);
   const [settingsForm, setSettingsForm] = useState({ displayName: "", bio: "" });
   const [friendUsername, setFriendUsername] = useState("");
+  const [passwordForm, setPasswordForm] = useState({ currentPassword: "", newPassword: "" });
   const [groupTitle, setGroupTitle] = useState("");
   const [selectedGroupMembers, setSelectedGroupMembers] = useState<string[]>([]);
   const [pendingGroupAvatar, setPendingGroupAvatar] = useState<File | null>(null);
@@ -665,6 +667,22 @@ export default function App() {
     setBootstrap(data);
     setInfo("Settings saved.");
     setActiveModal(null);
+  }
+
+  async function handleChangePassword(event: FormEvent) {
+    event.preventDefault();
+    if (!token) return;
+    if (!passwordForm.currentPassword || !passwordForm.newPassword) {
+      setError("Both fields are required.");
+      return;
+    }
+    try {
+      await changePassword(token, passwordForm.currentPassword, passwordForm.newPassword);
+      setInfo("Password changed.");
+      setPasswordForm({ currentPassword: "", newPassword: "" });
+    } catch (passwordError) {
+      setError(passwordError instanceof Error ? passwordError.message : "Failed to change password.");
+    }
   }
 
   function openCropModal(file: File, purpose: CropPurpose) {
@@ -1392,6 +1410,27 @@ export default function App() {
                     />
                     <button className="primary-button" type="submit" style={{ whiteSpace: "nowrap" }}>
                       Send
+                    </button>
+                  </form>
+                </div>
+
+                <div style={{ borderTop: "1px solid var(--line)", paddingTop: "16px", marginTop: "16px" }}>
+                  <strong>Change password</strong>
+                  <form onSubmit={handleChangePassword} style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "8px" }}>
+                    <input
+                      type="password"
+                      placeholder="Current password"
+                      value={passwordForm.currentPassword}
+                      onChange={(event) => setPasswordForm({ ...passwordForm, currentPassword: event.target.value })}
+                    />
+                    <input
+                      type="password"
+                      placeholder="New password"
+                      value={passwordForm.newPassword}
+                      onChange={(event) => setPasswordForm({ ...passwordForm, newPassword: event.target.value })}
+                    />
+                    <button className="primary-button" type="submit" style={{ alignSelf: "flex-start" }}>
+                      Change
                     </button>
                   </form>
                 </div>

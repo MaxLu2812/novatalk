@@ -62,6 +62,17 @@ export async function uploadMyAvatar(token: string, file: File) {
   return request<Bootstrap>("/api/me/avatar", { method: "POST", body: form }, token);
 }
 
+export async function changePassword(token: string, currentPassword: string, newPassword: string) {
+  return request<{ ok: boolean }>(
+    "/api/me/password",
+    {
+      method: "POST",
+      body: JSON.stringify({ currentPassword, newPassword }),
+    },
+    token,
+  );
+}
+
 export async function sendFriendRequest(token: string, username: string) {
   return request<Bootstrap>(
     "/api/friends/request",

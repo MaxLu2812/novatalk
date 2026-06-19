@@ -130,7 +130,8 @@ function initSchema() {
 
 function publicAssetUrl(assetPath: string | null) {
   if (!assetPath) return null;
-  return `http://localhost:${PORT}${assetPath}`;
+  const base = (process.env.PUBLIC_URL || `http://localhost:${PORT}`).replace(/\/+$/, "");
+  return `${base}${assetPath}`;
 }
 
 function mapUser(row: Record<string, unknown>): UserRecord {
@@ -536,6 +537,32 @@ app.post("/api/me/avatar", requireAuth, uploadAvatar.single("avatar"), (req, res
   const avatarPath = `/uploads/avatars/${req.file.filename}`;
   db.prepare("UPDATE users SET avatar_path = ? WHERE id = ?").run(avatarPath, authed.user.id);
   res.json(buildBootstrap(authed.user.id));
+});
+
+app.post("/api/me/password", requireAuth, (req, res) => {
+  const authed = req as AuthedRequest;
+  const currentPassword = String(req.body.currentPassword ?? "");
+  const newPassword = String(req.body.newPassword ?? "");
+
+  if (!currentPassword || !newPassword) {
+    res.status(400).json({ error: "Current password and new password are required." });
+    return;
+  }
+
+  if (newPassword.length < 4) {
+    res.status(400).json({ error: "New password must be at least 4 characters." });
+    return;
+  }
+
+  const row = db.prepare("SELECT password_hash FROM users WHERE id = ?").get(authed.user.id) as Record<string, unknown> | undefined;
+
+  if (!row || !verifyPassword(currentPassword, String(row.password_hash))) {
+    res.status(403).json({ error: "Current password is incorrect." });
+    return;
+  }
+
+  db.prepare("UPDATE users SET password_hash = ? WHERE id = ?").run(hashPassword(newPassword), authed.user.id);
+  res.json({ ok: true });
 });
 
 app.post("/api/friends/request", requireAuth, (req, res) => {
