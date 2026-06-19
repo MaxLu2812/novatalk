@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "node ../node_modules/tsx/dist/cli.mjs watch src/index.ts",
-    "build": "node ../node_modules/typescript/bin/tsc",
+    "build": "npx tsc",
+    "start": "node dist/index.js",
     "db:generate": "echo messenger schema is initialized at server startup",
     "db:push": "echo messenger schema is initialized at server startup"
   },
