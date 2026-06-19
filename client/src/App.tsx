@@ -951,7 +951,7 @@ export default function App() {
       <div className="auth-shell">
         <div className="auth-card floating">
           <div className="auth-copy">
-            <span className="eyebrow">NovaTalk</span>
+            <span className="eyebrow">VladikLox</span>
             <h1>Cleaner messenger, softer motion, sharper flow.</h1>
             <p>
               Sign up with a display name and unique <code>@username</code>, add friends, create groups,
