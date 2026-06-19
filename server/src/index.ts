@@ -41,9 +41,11 @@ const dbPath = path.join(dataDir, "messenger.db");
 
 const app = express();
 const httpServer = createServer(app);
+const corsOrigins = (process.env.CORS_ORIGIN || "http://localhost:5173").split(",");
 const io = new Server(httpServer, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: corsOrigins,
+    credentials: true,
   },
 });
 const db = new DatabaseSync(dbPath);
