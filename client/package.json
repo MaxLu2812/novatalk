@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "start": "vite preview --port $PORT --host"
+    "start": "node server.mjs"
   },
   "dependencies": {
     "react": "^19.1.0",
