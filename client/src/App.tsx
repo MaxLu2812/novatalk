@@ -14,6 +14,8 @@ import {
   uploadConversationAvatar,
   uploadMyAvatar,
 } from "./api";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 import type { Bootstrap, Conversation, Message } from "./types";
 import "./styles.css";
 
@@ -345,7 +347,7 @@ export default function App() {
   useEffect(() => {
     if (!token) return;
 
-    const socket = io("http://localhost:3001", {
+    const socket = io(API_URL, {
       auth: { token },
     });
     socketRef.current = socket;
