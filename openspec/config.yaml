@@ -1,0 +1,62 @@
+# openspec/config.yaml
+schema: spec-driven
+
+persistence:
+  backend: engram
+  engram:
+    project_key: discord
+    topics:
+      proposals: sdd/discord/proposals
+      specs: sdd/discord/specs
+      design: sdd/discord/design
+      tasks: sdd/discord/tasks
+      archive: sdd/discord/archive
+      decisions: sdd/discord/decisions
+
+context: |
+  Tech stack: Express 5 + Socket.io 4 (server), React 19 + Vite 7 (client), npm workspaces monorepo
+  Architecture: Monorepo (client/, server/), REST + WebSocket API, node:sqlite persistence, file-based uploads
+  Testing: Not configured — no test runner, no test framework, no test files detected
+  Style: TypeScript strict mode (both workspaces), ES modules, tsx for dev server, tsc + Vite for build
+  Memory: Engram persistent memory — session state, decisions, and artifacts survive compactions. Use `mem_search` and `mem_context` to recover prior SDD state. Every phase saves to Engram with the topic keys defined below.
+
+rules:
+  proposal:
+    - Include rollback plan for risky changes
+  specs:
+    - Use Given/When/Then for scenarios
+    - Use RFC 2119 keywords (MUST, SHALL, SHOULD, MAY)
+  design:
+    - Include sequence diagrams for complex flows
+    - Document architecture decisions with rationale
+  tasks:
+    - Group by phase, use hierarchical numbering
+    - Keep tasks completable in one session
+  apply:
+    - Follow existing code patterns
+    tdd: false
+    test_command: ""
+  verify:
+    test_command: ""
+    build_command: "npm run build"
+    coverage_threshold: 0
+  archive:
+    - Warn before merging destructive deltas
+
+testing:
+  strict_tdd: false
+  detected: "2026-06-22"
+  runner:
+    framework: "none"
+    command: ""
+  layers:
+    unit: { available: false, tool: "-" }
+    integration: { available: false, tool: "-" }
+    e2e: { available: false, tool: "-" }
+  coverage:
+    available: false
+    command: ""
+  quality:
+    linter: { available: false, command: "-" }
+    type_checker: { available: true, command: "npx tsc --noEmit" }
+    formatter: { available: false, command: "-" }
