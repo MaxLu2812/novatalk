@@ -1,4 +1,5 @@
 import { type ChangeEvent, type FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { motion } from "framer-motion";
 import { io, type Socket } from "socket.io-client";
 import {
   acceptRequest,
@@ -15,6 +16,7 @@ import {
   uploadMyAvatar,
   changePassword,
 } from "./api";
+import HeroScene from "./components/HeroScene";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 import type { Bootstrap, Conversation, Message } from "./types";
@@ -966,8 +968,14 @@ export default function App() {
 
   if (!token || !bootstrap) {
     return (
-      <div className="auth-shell">
-        <div className="auth-card floating">
+      <div className="hero-shell">
+        <HeroScene />
+        <motion.div
+          className="hero-card"
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: "spring", stiffness: 100, damping: 20 }}
+        >
           <div className="auth-copy">
             <span className="eyebrow">VladikLox</span>
             <h1>Cleaner messenger, softer motion, sharper flow.</h1>
@@ -1022,7 +1030,7 @@ export default function App() {
               {authMode === "register" ? "Create account" : "Sign in"}
             </button>
           </form>
-        </div>
+        </motion.div>
       </div>
     );
   }
